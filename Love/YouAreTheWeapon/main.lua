@@ -11,6 +11,7 @@ local state = {
     bullet = bullet.getSegments(),
     bombs = bomb.getBombs(),
     humans = human.getHumans(),
+    freezes = freeze.getFreezes(),
     accelerators = {},
 }
 
@@ -30,12 +31,13 @@ function love.load()
     timer = 0
     love.window.setMode(700, 700) -- Remove this after finishing the game
     humanImage = love.graphics.newImage('assets/human.png')
-    chooseLevel('level-6')
+    chooseLevel('leve-tr')
     bullet.setSegments(state.bullet)
     human.setHumans(state.humans)
     bomb.setBombs(state.bombs)
+    freeze.setFreezes(state.freezes)
     accelerators = state.accelerators
-    MouseGridPosX = 0
+    MouseGridPosX = 0 
     MouseGridPosY = 0
     placeItem = 'bomb'
     gridXCount = 14

@@ -7,6 +7,7 @@ local bomb = {}
 local bombs = {}
 local timer = 0
 local blastBombs = true
+local bombFreeze = 1
 local anotherTimer = 0
 local bombImage = nil
 
@@ -45,20 +46,18 @@ function bomb.draw()
 end
 
 function bomb.freeze() 
+    bombFreeze = 0
     blastBombs = false
-    local curr = anotherTimer
-    anotherTimer = 0
-    return curr
 end
 
-function bomb.unfreeze(bombTimer) 
-    anotherTimer = bombTimer
+function bomb.unfreeze()
+    bombFreeze = 1
     blastBombs = true
 end
 
 function bomb.update(dt)
     timer = timer + dt
-    anotherTimer = anotherTimer + dt
+    anotherTimer = anotherTimer + (dt * bombFreeze)
     if anotherTimer >= 7 and blastBombs then
 
         anotherTimer = 0

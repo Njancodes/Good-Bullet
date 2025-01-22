@@ -7,8 +7,7 @@ local freezes = {}
 local timer = 0
 local anotherTimer = 0
 local freezeImage = nil
-local freezeBombs = false
-local bombTimer = 0
+local startCounting = 0
 
 
 function freeze.load()
@@ -44,8 +43,9 @@ function freeze.draw()
     end
 end
 
-function freezeTheBombs()
-    freezeBombs = true
+local function startCounter()
+    anotherTimer = 0
+    startCounting = 1
 end
 
 function freeze.update(dt)
@@ -58,19 +58,18 @@ function freeze.update(dt)
             if currPositionOfHeadX == freeze.x and currPositionOfHeadY == freeze.y then
                 if bullet.bulletSegmentsLength() > 1 then
                     bullet.remove(bullet.bulletSegmentsLength())
+                    startCounter()
+                    bomb.freeze()
                     table.remove(freezes, freezeIndex)
-                    freezeTheBombs()
                 end
             end
         end
     end
-    anotherTimer = anotherTimer + dt
-    if freezeBombs then
-        bombTimer = bomb.freeze()
-    elseif anotherTimer >= 2 then
+    anotherTimer = anotherTimer + (dt * startCounting)
+    if anotherTimer >= 3 then
+        bomb.unfreeze()
+        startCounting = 0
         anotherTimer = 0
-
-        bomb.unfreeze(bombTimer)
     end
 end
 
