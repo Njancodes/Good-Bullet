@@ -39,7 +39,6 @@ end
 
 function bomb.draw()
     love.graphics.setColor(1, 1, 1)
-    love.graphics.print("Bomb Timer: ".. math.floor(anotherTimer), 10, 40)
     for bombIndex, bomb in ipairs(bombs) do
         love.graphics.draw(bombImage, ((bomb.x - 1) * cellSize) + offset, ((bomb.y - 1) * cellSize) + offset, 0, scale)
     end

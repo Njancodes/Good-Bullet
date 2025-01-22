@@ -37,7 +37,6 @@ end
 
 function freeze.draw()
     love.graphics.setColor(1, 1, 1)
-    love.graphics.print("Freeze Timer: ".. math.floor(anotherTimer), 10, 55)
     for freezzeIndex, freeze in ipairs(freezes) do
         love.graphics.draw(freezeImage, ((freeze.x - 1) * cellSize) + offset, ((freeze.y - 1) * cellSize) + offset, 0, scale)
     end

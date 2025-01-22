@@ -40,7 +40,6 @@ end
 
 function alien.draw()
     love.graphics.setColor(1, 1, 1)
-    love.graphics.print("Alien Timer: ".. math.floor(anotherTimer), 10, 70)
     local bullet_x, bullet_y = bullet.headPosition()
     for alienIndex, alien in ipairs(aliens) do
         if bullet_x == alien.x and bullet_y == alien.y then

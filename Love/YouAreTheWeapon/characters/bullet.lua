@@ -142,8 +142,6 @@ function bullet.draw()
     love.graphics.setColor(1, 1, 1)
     local bullet_x, bullet_y = bullet.headPosition()
     local direction = directionQueue[1]
-    love.graphics.print('The grid location of head on X: ' .. bullet_x, 10, 10)
-    love.graphics.print('The grid location of head on Y: ' .. bullet_y, 10, 25)
 
     for bulletIndex, bulletSegment in ipairs(bullet.getSegments()) do
         local rotation = 0
