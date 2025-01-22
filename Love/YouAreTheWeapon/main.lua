@@ -3,19 +3,26 @@ level = {}
 
 local bullet = require('characters.bullet')
 local human = require('characters.human')
+local alien = require('characters.alien')
 local bomb = require('characters.bomb')
 local json = require('dkjson')
 
+gridXCount = 14
+gridYCount = 14
+cellSize = 36
+offset = 98
+scale = cellSize / 50
 
 local state = {
     bullet = bullet.getSegments(),
     bombs = bomb.getBombs(),
     humans = human.getHumans(),
     freezes = freeze.getFreezes(),
+    alienWall = false,
     accelerators = {},
 }
 
-function chooseLevel(levelname)
+local function chooseLevel(levelname)
     local file = io.open('YouAreTheWeapon/'..levelname .. '.json', "r")
     if file then
         local content = file:read('*a')
@@ -31,20 +38,16 @@ function love.load()
     timer = 0
     love.window.setMode(700, 700) -- Remove this after finishing the game
     humanImage = love.graphics.newImage('assets/human.png')
-    chooseLevel('leve-tr')
+    chooseLevel('level-7')
     bullet.setSegments(state.bullet)
     human.setHumans(state.humans)
     bomb.setBombs(state.bombs)
+    alien.setEnterAliens(state.alienWall)
     freeze.setFreezes(state.freezes)
     accelerators = state.accelerators
     MouseGridPosX = 0 
     MouseGridPosY = 0
     placeItem = 'bomb'
-    gridXCount = 14
-    gridYCount = 14
-    cellSize = 36
-    offset = 98
-    scale = cellSize / 50
     bullet.load()
     bomb.load()
     freeze.load()
@@ -100,6 +103,7 @@ function love.update(dt)
     
     human.update(dt)
     bomb.update(dt)
+    alien.update(dt)
     freeze.update(dt)
 end
 
@@ -112,11 +116,14 @@ function love.keypressed(key)
         bomb.freeze()
     end
 
+    alien.keypressed(key)
+
     if key == 'e' then
         state.bullet = bullet.getSegments()
         state.bombs = bomb.getBombs()
         state.accelerators = accelerators
         state.humans = human.getHumans()
+        state.alienWall = alien.getEnterAliens()
         for idx, human in ipairs(state.humans) do
             print(human.type)
         end
@@ -151,7 +158,6 @@ function love.keypressed(key)
 end
 
 
-
 function love.draw()
     love.graphics.setColor(0.5, 0, 0.5)
     love.graphics.rectangle('fill', 98, 98, gridXCount * cellSize, gridYCount * cellSize)
@@ -159,12 +165,16 @@ function love.draw()
     bullet.draw()
     bomb.draw()
     freeze.draw()
+    alien.draw()
 
     love.graphics.setColor(0, 0, 1)
     for acceleratorIndex, accelerator in ipairs(accelerators) do
         love.graphics.rectangle('fill', ((accelerator.x - 1) * cellSize) + offset, ((accelerator.y - 1) * cellSize) +
         offset, cellSize - 1, cellSize - 1)
     end
+
+
+
 
     human.draw()
 
