@@ -2,12 +2,13 @@ level = {}
 
 local bullet = require('characters.bullet')
 local human = require('characters.human')
+local bomb = require('characters.bomb')
 local json = require('dkjson')
 
 
 local state = {
     bullet = bullet.getSegments(),
-    bombs = {},
+    bombs = bomb.getBombs(),
     humans = human.getHumans(),
     accelerators = {},
 }
@@ -29,13 +30,12 @@ function love.load()
     love.window.setMode(700, 700) -- Remove this after finishing the game
     bombImage = love.graphics.newImage('assets/bomb.png')
     humanImage = love.graphics.newImage('assets/human.png')
-    chooseLevel('level-2')
+    chooseLevel('level-6')
     bullet.setSegments(state.bullet)
-    canMove = false
-    bombs = state.bombs
-    accelerators = state.accelerators
     human.setHumans(state.humans)
-    humans = human.getHumans()
+    canMove = false
+    bomb.setBombs(state.bombs)
+    accelerators = state.accelerators
     MouseGridPosX = 0
     MouseGridPosY = 0
     placeItem = 'bomb'
@@ -68,17 +68,11 @@ function love.update(dt)
 
         -- Level maker system
         if love.mouse.isDown(2) then
-            local cannotPlaceBomb = false
             local cannotPlaceAccelerator = false
 
 
 
-            for bombIndex, bomb in ipairs(bombs) do
-                if bomb.x == MouseGridPosX and bomb.y == MouseGridPosY then
-                    cannotPlaceBomb = true
-                    table.remove(bombs, bombIndex)
-                end
-            end
+           
             for acceleratorIndex, accelerator in ipairs(accelerators) do
                 if accelerator.x == MouseGridPosX and accelerator.y == MouseGridPosY then
                     cannotPlaceAccelerator = true
@@ -86,13 +80,11 @@ function love.update(dt)
                 end
             end
             human.clashWithMouse(MouseGridPosX, MouseGridPosY)
-            
+            bomb.clashWithMouse(MouseGridPosX, MouseGridPosY)
 
 
 
-            if not cannotPlaceBomb and placeItem == 'bomb' then
-                table.insert(bombs, { x = MouseGridPosX, y = MouseGridPosY })
-            end
+
 
             if not cannotPlaceAccelerator and placeItem == 'accelerator' then
                 table.insert(accelerators, { x = MouseGridPosX, y = MouseGridPosY })
@@ -100,29 +92,10 @@ function love.update(dt)
 
 
         end
-
-        local currPositionOfHeadX, currPositionOfHeadY = bullet.headPosition()
-
-        for bombIndex, bomb in ipairs(bombs) do
-            if currPositionOfHeadX == bomb.x and currPositionOfHeadY == bomb.y then
-                if bullet.bulletSegmentsLength() > 1 then
-                    bullet.remove(bullet.bulletSegmentsLength())
-                    table.remove(bombs, bombIndex)
-                end
-            end
-        end
-
-        for acceleratorIndex, accelerator in ipairs(accelerators) do
-            if currPositionOfHeadX == accelerator.x and currPositionOfHeadY == accelerator.y then
-                dontRemove = true
-                table.remove(accelerators, acceleratorIndex)
-            end
-        end
-
-
-
     end
+    
     human.update(dt)
+    bomb.update(dt)
 end
 
 function love.keypressed(key)
@@ -132,12 +105,15 @@ function love.keypressed(key)
 
     if key == 'e' then
         state.bullet = bullet.getSegments()
-        state.bombs = bombs
+        state.bombs = bomb.getBombs()
         state.accelerators = accelerators
         state.humans = human.getHumans()
-
+        for idx, human in ipairs(state.humans) do
+            print(human.type)
+        end
         local string = json.encode(state, { index = true })
-        local file = io.open('state.json', 'w')
+        print(string)
+        local file = io.open('YouAreTheWeapon/state.json', 'w')
         file:write(string)
         file:close()
         print("State Has Been Saved !!!")
@@ -152,7 +128,10 @@ function love.keypressed(key)
     end
 
     if key == '4' then
-        placeItem = 'moveHuman'
+        placeItem = 'moveHumanX'
+    end
+    if key == '5' then
+        placeItem = 'moveHumanY'
     end
 
     bullet.keypressed(key)
@@ -165,10 +144,8 @@ function love.draw()
     love.graphics.rectangle('fill', 98, 98, gridXCount * cellSize, gridYCount * cellSize)
 
     bullet.draw()
-
-    for bombIndex, bomb in ipairs(bombs) do
-        love.graphics.draw(bombImage, ((bomb.x - 1) * cellSize) + offset, ((bomb.y - 1) * cellSize) + offset, 0, scale)
-    end
+    bomb.draw()
+    
 
     love.graphics.setColor(0, 0, 1)
     for acceleratorIndex, accelerator in ipairs(accelerators) do

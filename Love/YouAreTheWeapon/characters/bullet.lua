@@ -10,9 +10,18 @@ local midfireImage = nil
 local canMove = true
 local directionGrid = {}
 local directionQueue = { 'right' }
+local dontRemove = false
 
 function bullet.cannotMove()
     canMove = false
+end
+
+function bullet.dontRemoveSegment()
+    dontRemove = true
+end
+
+function bullet.removeSegment()
+    dontRemove = false
 end
 
 function bullet.canMove()
@@ -88,7 +97,7 @@ end
 
 function bullet.update()
     local bulletSegments = bullet.getSegments()
-
+    bullet.removeSegment()
     if #bullet.segments == 1 then
         canMove = false
     end
@@ -113,6 +122,14 @@ function bullet.update()
     end
 
     bullet.insert(1, { x = nextXPosition, y = nextYPosition })
+
+    local currPositionOfHeadX, currPositionOfHeadY = bullet.headPosition()
+    for acceleratorIndex, accelerator in ipairs(accelerators) do
+        if currPositionOfHeadX == accelerator.x and currPositionOfHeadY == accelerator.y then
+            bullet.dontRemoveSegment()
+            table.remove(accelerators, acceleratorIndex)
+        end
+    end
 
     if dontRemove then
         return

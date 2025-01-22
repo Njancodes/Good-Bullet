@@ -8,19 +8,18 @@ local timer = 0
 
 function human.clashWithMouse(posX, posY)
     local cannotPlaceHuman = false
-    for humanIndex, human in ipairs(humans) do
-            
+    for humanIndex, human in ipairs(humans) do  
         if human.x == posX and human.y == posY then
             cannotPlaceHuman = true
             table.remove(humans, humanIndex)
         end
-        print(cannotPlaceHuman)
-        if not cannotPlaceHuman and placeItem == 'human' then
-            table.insert(humans, {type = placeItem,  x = posX, y = posY })
-        elseif not cannotPlaceHuman and placeItem == 'moveHuman' then
-            table.insert(humans, {type = placeItem,  x = posX, y = posY, xStart = posX, yStart = posY, xDelta = 0, yDelta = 5 })
-        end
-
+    end
+    if not cannotPlaceHuman and placeItem == 'human' then
+        table.insert(humans, {type = placeItem,  x = posX, y = posY })
+    elseif not cannotPlaceHuman and placeItem == 'moveHumanX' then
+        table.insert(humans, {type = placeItem,  x = posX, y = posY, xStart = posX, yStart = posY, xDelta = 5, yDelta = 0, direction = 1 })
+    elseif not cannotPlaceHuman and placeItem == 'moveHumanY' then
+        table.insert(humans, {type = placeItem,  x = posX, y = posY, xStart = posX, yStart = posY, xDelta = 0, yDelta = 5, direction = 1 })
     end
 end
 
@@ -45,6 +44,29 @@ function human.draw()
     end
 end
 
+local function moveHuman(human)
+    if human.xDelta == 0 then
+        local yEnd = human.yStart + human.yDelta
+        if human.y == human.yStart then
+            human.direction = 1
+        end
+        if human.y == yEnd then
+            human.direction = -1
+        end
+        human.y = human.y + human.direction
+    end
+    if human.yDelta == 0 then
+        local xEnd = human.xStart + human.xDelta
+        if human.x == human.xStart then
+            human.direction = 1
+        end
+        if human.x == xEnd then
+            human.direction = -1
+        end
+        human.x = human.x + human.direction
+    end
+    
+end
 
 function human.update(dt)
     timer = timer + dt
@@ -52,8 +74,8 @@ function human.update(dt)
 
         timer = 0
     for humanIndex, human in ipairs(humans) do
-            if human.type == 'moveHuman' then
-                
+            if human.type == 'moveHumanX' or human.type == 'moveHumanY' then
+                moveHuman(human)
             end
         end
     end

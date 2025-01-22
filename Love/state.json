@@ -1,0 +1,1 @@
+{"accelerators":[],"bombs":[],"bullet":[{"x":4,"y":8},{"x":4,"y":8}],"humans":[{"yStart":4,"xDelta":5,"x":10,"y":4,"direction":-1,"yDelta":0,"type":"moveHumanX","xStart":9},{"yStart":6,"xDelta":0,"x":8,"y":9,"direction":1,"yDelta":5,"type":"moveHumanY","xStart":8}]}
