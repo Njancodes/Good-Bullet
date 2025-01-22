@@ -1,3 +1,4 @@
+local freeze = require "characters.freeze"
 level = {}
 
 local bullet = require('characters.bullet')
@@ -28,12 +29,10 @@ end
 function love.load()
     timer = 0
     love.window.setMode(700, 700) -- Remove this after finishing the game
-    bombImage = love.graphics.newImage('assets/bomb.png')
     humanImage = love.graphics.newImage('assets/human.png')
     chooseLevel('level-6')
     bullet.setSegments(state.bullet)
     human.setHumans(state.humans)
-    canMove = false
     bomb.setBombs(state.bombs)
     accelerators = state.accelerators
     MouseGridPosX = 0
@@ -45,6 +44,8 @@ function love.load()
     offset = 98
     scale = cellSize / 50
     bullet.load()
+    bomb.load()
+    freeze.load()
 end
 
 function love.mousepressed()
@@ -81,6 +82,7 @@ function love.update(dt)
             end
             human.clashWithMouse(MouseGridPosX, MouseGridPosY)
             bomb.clashWithMouse(MouseGridPosX, MouseGridPosY)
+            freeze.clashWithMouse(MouseGridPosX, MouseGridPosY)
 
 
 
@@ -96,11 +98,16 @@ function love.update(dt)
     
     human.update(dt)
     bomb.update(dt)
+    freeze.update(dt)
 end
 
 function love.keypressed(key)
     if key == '1' then
         placeItem = 'bomb'
+    end
+
+    if key == 'f' then
+        bomb.freeze()
     end
 
     if key == 'e' then
@@ -134,6 +141,10 @@ function love.keypressed(key)
         placeItem = 'moveHumanY'
     end
 
+    if key == '6' then
+        placeItem = 'freeze'
+    end
+
     bullet.keypressed(key)
 end
 
@@ -145,7 +156,7 @@ function love.draw()
 
     bullet.draw()
     bomb.draw()
-    
+    freeze.draw()
 
     love.graphics.setColor(0, 0, 1)
     for acceleratorIndex, accelerator in ipairs(accelerators) do

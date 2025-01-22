@@ -1,10 +1,18 @@
 
 local bullet = require 'characters.bullet'
+local human  = require 'characters.human'
 
 
 local bomb = {}
 local bombs = {}
 local timer = 0
+local blastBombs = true
+local anotherTimer = 0
+local bombImage = nil
+
+function bomb.load()
+    bombImage = love.graphics.newImage('assets/bomb.png')
+end
 
 
 function bomb.clashWithMouse(posX, posY)
@@ -30,15 +38,55 @@ end
 
 function bomb.draw()
     love.graphics.setColor(1, 1, 1)
+    love.graphics.print("Bomb Timer: ".. math.floor(anotherTimer), 10, 40)
     for bombIndex, bomb in ipairs(bombs) do
         love.graphics.draw(bombImage, ((bomb.x - 1) * cellSize) + offset, ((bomb.y - 1) * cellSize) + offset, 0, scale)
     end
 end
 
+function bomb.freeze() 
+    blastBombs = false
+    local curr = anotherTimer
+    anotherTimer = 0
+    return curr
+end
 
+function bomb.unfreeze(bombTimer) 
+    anotherTimer = bombTimer
+    blastBombs = true
+end
 
 function bomb.update(dt)
     timer = timer + dt
+    anotherTimer = anotherTimer + dt
+    if anotherTimer >= 7 and blastBombs then
+
+        anotherTimer = 0
+
+        if #bombs ~= 0 then
+            for bombIdx, bomb in ipairs(bombs) do
+                local positions = {
+                    {x = bomb.x - 1, y = bomb.y - 1},
+                    {x = bomb.x, y = bomb.y - 1},
+                    {x = bomb.x + 1, y = bomb.y - 1},
+                    {x = bomb.x - 1, y = bomb.y},
+                    {x = bomb.x + 1, y = bomb.y},
+                    {x = bomb.x - 1, y = bomb.y + 1},
+                    {x = bomb.x, y = bomb.y + 1},
+                    {x = bomb.x + 1, y = bomb.y + 1},
+                }
+                for index, value in ipairs(human.getHumans()) do
+                    for i = 1, #positions do
+                        if positions[i].x == value.x and positions[i].y == value.y then
+                            print("Game Over")
+                            bullet.cannotMove()
+                        end
+                    end
+                end
+            
+            end
+        end
+    end
     if timer >= .15 then
         timer = 0
 

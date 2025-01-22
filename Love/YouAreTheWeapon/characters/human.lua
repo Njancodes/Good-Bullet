@@ -65,7 +65,6 @@ local function moveHuman(human)
         end
         human.x = human.x + human.direction
     end
-    
 end
 
 function human.update(dt)
@@ -77,15 +76,15 @@ function human.update(dt)
             if human.type == 'moveHumanX' or human.type == 'moveHumanY' then
                 moveHuman(human)
             end
+            for bulletIdx, fire in ipairs(bullet.getSegments()) do
+                if fire.x == human.x and fire.y == human.y then
+                    bullet.cannotMove()
+                end
+            end
         end
     end
 
-    local currPositionOfHeadX, currPositionOfHeadY = bullet.headPosition()
-    for humanIndex, human in ipairs(humans) do
-        if currPositionOfHeadX == human.x and currPositionOfHeadY == human.y then
-            bullet.cannotMove()
-        end
-    end
+
 end
 
 return human
