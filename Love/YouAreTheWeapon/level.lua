@@ -18,7 +18,7 @@ gridXCount = 14
 gridYCount = 14
 cellSize = 30
 offset = 140
-scale = cellSize / 50
+scale = cellSize/50
 
 local state = {
     bullet = bullet.getSegments(),
@@ -46,8 +46,9 @@ function level.load()
     timer = 0
     love.graphics.setDefaultFilter("nearest", "nearest")
     background = love.graphics.newImage("assets/background.png")
+    spaceShipFloor = love.graphics.newImage("assets/spaceship-floor.png")
     love.window.setMode(700, 700) -- Remove this after finishing the game
-    humanImage = love.graphics.newImage('assets/human.png')
+    humanImage = love.graphics.newImage('assets/Uman.png')
     bullet.setSegments(state.bullet)
     bulletMaster.setDialogues(state.dialogues)
     human.setHumans(state.humans)
@@ -77,8 +78,8 @@ function level.update(dt)
         dontRemove = false
         MouseX, MouseY = love.mouse.getPosition()
 
-        MouseGridPosX = math.floor((MouseX - 98) / cellSize) + 1
-        MouseGridPosY = math.floor((MouseY - 98) / cellSize) + 1
+        MouseGridPosX = math.floor((MouseX - 140) / cellSize) + 1
+        MouseGridPosY = math.floor((MouseY - 140) / cellSize) + 1
 
 
         bullet.update()
@@ -173,8 +174,7 @@ end
 
 function level.draw()
     love.graphics.draw(background, 0,0)
-    love.graphics.setColor(0.5, 0, 0.5)
-    love.graphics.rectangle('fill', offset, offset, gridXCount * cellSize, gridYCount * cellSize)
+    love.graphics.draw(spaceShipFloor, offset,offset)
     bulletMaster.draw()
     bullet.draw()
     bomb.draw()

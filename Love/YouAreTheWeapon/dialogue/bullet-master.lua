@@ -47,8 +47,6 @@ function bulletMaster.update(dt)
                 end
                 continueDialogue = false
             end
-        else
-            bullet.canMove()
         end
     end
 end
@@ -57,6 +55,9 @@ end
 function bulletMaster.keypressed(key)
     if key == 'return' then
         continueDialogue = true
+        if currDialogue >= #dialogues then
+            bullet.canMove()
+        end
     end
 end
 
@@ -77,7 +78,6 @@ function bulletMaster.draw()
     love.graphics.rectangle('fill', 95, 20, 550, 100)
     love.graphics.setColor(0, 0, 1)
     if currDialogue > 0 and currDialogue <= #dialogues then
-        print(showDialogue)
         love.graphics.print(showDialogue, dialogueFont, 100,30)
     end
 end

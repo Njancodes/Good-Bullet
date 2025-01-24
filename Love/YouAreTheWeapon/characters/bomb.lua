@@ -12,7 +12,7 @@ local anotherTimer = 0
 local bombImage = nil
 
 function bomb.load()
-    bombImage = love.graphics.newImage('assets/bomb.png')
+    bombImage = love.graphics.newImage('assets/Bomb.png')
 end
 
 
@@ -40,7 +40,7 @@ end
 function bomb.draw()
     love.graphics.setColor(1, 1, 1)
     for bombIndex, bomb in ipairs(bombs) do
-        love.graphics.draw(bombImage, ((bomb.x - 1) * cellSize) + offset, ((bomb.y - 1) * cellSize) + offset, 0, scale)
+        love.graphics.draw(bombImage, ((bomb.x - 1) * cellSize) + offset, ((bomb.y - 1) * cellSize) + offset, 0, 1.8)
     end
 end
 

@@ -40,7 +40,7 @@ function human.draw()
         else
             love.graphics.setColor(1, 1, 1)
         end
-        love.graphics.draw(humanImage, ((human.x - 1) * cellSize) + offset, ((human.y - 1) * cellSize) + offset, 0, scale)
+        love.graphics.draw(humanImage, ((human.x - 1) * cellSize) + offset, ((human.y - 1) * cellSize) + offset, 0, 1.8)
     end
 end
 
@@ -78,6 +78,7 @@ function human.update(dt)
             end
             for bulletIdx, fire in ipairs(bullet.getSegments()) do
                 if fire.x == human.x and fire.y == human.y then
+                    print("Hit")
                     bullet.cannotMove()
                 end
             end

@@ -45,9 +45,9 @@ function bullet.headPosition()
 end
 
 function bullet.load()
-    bulletImage = love.graphics.newImage('assets/bullet.png')
-    fireImage = love.graphics.newImage('assets/fire.png')
-    midfireImage = love.graphics.newImage('assets/mid-fire.png')
+    bulletImage = love.graphics.newImage('assets/Bullet2.png')
+    fireImage = love.graphics.newImage('assets/Fire.png')
+    midfireImage = love.graphics.newImage('assets/Mid-Fire.png')
 
     for i = 1, gridXCount do
         directionGrid[i] = {}
@@ -162,7 +162,7 @@ function bullet.draw()
             if (not (checkOutOfBounds(bulletSegment.x, bulletSegment.y, 14, 14))) then
                 directionGrid[bulletSegment.x][bulletSegment.y] = direction
                 love.graphics.draw(bulletImage, ((bulletSegment.x + x) * cellSize) + offset,
-                ((bulletSegment.y + y) * cellSize) + offset, math.rad(rotation), scale, scale)
+                ((bulletSegment.y + y) * cellSize) + offset, math.rad(rotation), 1.8, 1.8)
             else
                 love.graphics.rectangle('fill', ((bulletSegment.x) * cellSize) + offset,
                 ((bulletSegment.y) * cellSize) + offset,cellSize-1, cellSize-1)
@@ -173,7 +173,7 @@ function bullet.draw()
             if (not (checkOutOfBounds(bulletSegment.x, bulletSegment.y, 14, 14))) then
                 local dir_table = directionGiver(directionGrid[bulletSegment.x][bulletSegment.y])
                 love.graphics.draw(fireImage, ((bulletSegment.x + dir_table.x) * cellSize) + offset,
-                    ((bulletSegment.y + dir_table.y) * cellSize) + offset, math.rad(dir_table.rotation), scale, scale)
+                    ((bulletSegment.y + dir_table.y) * cellSize) + offset, math.rad(dir_table.rotation), scale + 1.3, scale + 1.3)
             else
                 bullet.cannotMove()
             end
@@ -181,7 +181,7 @@ function bullet.draw()
             if (not (checkOutOfBounds(bulletSegment.x, bulletSegment.y, 14, 14))) then
                 local dir_table = directionGiver(directionGrid[bulletSegment.x][bulletSegment.y])
                 love.graphics.draw(midfireImage, ((bulletSegment.x + dir_table.x) * cellSize) + offset,
-                    ((bulletSegment.y + dir_table.y) * cellSize) + offset, math.rad(dir_table.rotation), scale, scale)
+                    ((bulletSegment.y + dir_table.y) * cellSize) + offset, math.rad(dir_table.rotation), scale + 1.3, scale + 1.3)
             else
                 bullet.cannotMove()
             end

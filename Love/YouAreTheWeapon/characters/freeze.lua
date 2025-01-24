@@ -38,7 +38,7 @@ end
 function freeze.draw()
     love.graphics.setColor(1, 1, 1)
     for freezzeIndex, freeze in ipairs(freezes) do
-        love.graphics.draw(freezeImage, ((freeze.x - 1) * cellSize) + offset, ((freeze.y - 1) * cellSize) + offset, 0, scale)
+        love.graphics.draw(freezeImage, ((freeze.x - 1) * cellSize) + offset, ((freeze.y - 1) * cellSize) + offset, 0, 1.8)
     end
 end
 

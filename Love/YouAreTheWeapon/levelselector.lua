@@ -36,7 +36,7 @@ function levelselector.mousepressed()
         button.clicked(
             function ()
                 print("Level "..btnIdx.." Selected")
-                chooseLevel('level-'..btnIdx)
+                chooseLevel('level-none')
                 changeScene('level')
             end
         )
