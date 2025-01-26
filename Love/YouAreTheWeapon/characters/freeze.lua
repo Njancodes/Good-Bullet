@@ -1,13 +1,12 @@
 local bullet = require 'characters.bullet'
 local bomb = require 'characters.bomb'
+local numberCountDown = require 'ui.numberCountDown'
 
 
 local freeze = {}
 local freezes = {}
 local timer = 0
-local anotherTimer = 0
 local freezeImage = nil
-local startCounting = 0
 
 
 function freeze.load()
@@ -42,10 +41,7 @@ function freeze.draw()
     end
 end
 
-local function startCounter()
-    anotherTimer = 0
-    startCounting = 1
-end
+
 
 function freeze.update(dt)
     timer = timer + dt
@@ -57,18 +53,12 @@ function freeze.update(dt)
             if currPositionOfHeadX == freeze.x and currPositionOfHeadY == freeze.y then
                 if bullet.bulletSegmentsLength() > 1 then
                     bullet.remove(bullet.bulletSegmentsLength())
-                    startCounter()
-                    bomb.freeze()
+                    -- Another freeze counter should start
+                    numberCountDown.freeze()
                     table.remove(freezes, freezeIndex)
                 end
             end
         end
-    end
-    anotherTimer = anotherTimer + (dt * startCounting)
-    if anotherTimer >= 3 then
-        bomb.unfreeze()
-        startCounting = 0
-        anotherTimer = 0
     end
 end
 

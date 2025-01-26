@@ -11,14 +11,21 @@ local json = require('dkjson')
 -- dialogue system
 local bulletMaster = require('dialogue.bullet-master')
 
+-- ui system
+local numberCountdown = require('ui.numberCountDown')
+local gameOver = require('ui.gameOver')
+
 -- images
 local background = nil
+
+-- data
+local content = ""
 
 gridXCount = 14
 gridYCount = 14
 cellSize = 30
 offset = 140
-scale = cellSize/50
+scale = cellSize / 50
 
 local state = {
     bullet = bullet.getSegments(),
@@ -29,11 +36,12 @@ local state = {
     accelerators = {},
     dialogues = bulletMaster.getDialogues()
 }
+local state = {}
 
 function chooseLevel(levelname)
-    local file = io.open('YouAreTheWeapon/'..levelname .. '.json', "r")
+    local file = io.open('YouAreTheWeapon/' .. levelname .. '.json', "r")
     if file then
-        local content = file:read('*a')
+        content = file:read('*a')
         state = json.decode(content, 1, nil)
         file:close()
         print("State Has Been Read !!!")
@@ -45,27 +53,55 @@ end
 function level.load()
     timer = 0
     love.graphics.setDefaultFilter("nearest", "nearest")
+
     background = love.graphics.newImage("assets/background.png")
     spaceShipFloor = love.graphics.newImage("assets/spaceship-floor.png")
+
+    numberCountdown.load()
+    numberCountdown.setCurrValue(10)
+    numberCountdown.pause()
+
     love.window.setMode(700, 700) -- Remove this after finishing the game
-    humanImage = love.graphics.newImage('assets/Uman.png')
+
+    bullet.flush()
     bullet.setSegments(state.bullet)
+    bulletMaster.reset()
     bulletMaster.setDialogues(state.dialogues)
     human.setHumans(state.humans)
     bomb.setBombs(state.bombs)
     alien.setEnterAliens(state.alienWall)
     freeze.setFreezes(state.freezes)
     accelerators = state.accelerators
-    MouseGridPosX = 0 
+
+    MouseGridPosX = 0
     MouseGridPosY = 0
+
     placeItem = 'bomb'
+    human.load()
     bullet.load()
+    gameOver.load()
     bomb.load()
     bulletMaster.load()
     freeze.load()
 end
 
+function level.restart()
+    timer = 0
+    state = json.decode(content, 1, nil)
+    human.setIsMoveHuman(true)
+    bomb.setBombs(state.bombs)
+    bullet.flush()
+    bullet.setSegments(state.bullet)
+    human.setHumans(state.humans)
+    bomb.setBombs(state.bombs)
+    alien.setEnterAliens(state.alienWall)
+    freeze.setFreezes(state.freezes)
+    accelerators = state.accelerators
+    numberCountdown.setCurrValue(10)
+end
+
 function level.mousepressed()
+    gameOver.mousepressed()
 end
 
 function level.update(dt)
@@ -82,7 +118,6 @@ function level.update(dt)
         MouseGridPosY = math.floor((MouseY - 140) / cellSize) + 1
 
 
-        bullet.update()
 
         -- Level maker system
         if love.mouse.isDown(2) then
@@ -90,7 +125,7 @@ function level.update(dt)
 
 
 
-           
+
             for acceleratorIndex, accelerator in ipairs(accelerators) do
                 if accelerator.x == MouseGridPosX and accelerator.y == MouseGridPosY then
                     cannotPlaceAccelerator = true
@@ -108,11 +143,11 @@ function level.update(dt)
             if not cannotPlaceAccelerator and placeItem == 'accelerator' then
                 table.insert(accelerators, { x = MouseGridPosX, y = MouseGridPosY })
             end
-
         end
     end
-    
+    numberCountdown.update(dt)
     human.update(dt)
+    bullet.update(dt)
     bulletMaster.update(dt)
     bomb.update(dt)
     alien.update(dt)
@@ -136,7 +171,8 @@ function level.keypressed(key)
         state.bombs = bomb.getBombs()
         state.accelerators = accelerators
         state.humans = human.getHumans()
-        state.dialogues = {"Hi Nijo !!", "I am Bullet#909", "And you are going to control.."," me for the rest of the game.."}
+        state.dialogues = { "Hi Nijo !!", "I am Bullet#909", "And you are going to control..",
+            " me for the rest of the game.." }
         state.alienWall = alien.getEnterAliens()
         for idx, human in ipairs(state.humans) do
             print(human.type)
@@ -171,29 +207,28 @@ function level.keypressed(key)
     bullet.keypressed(key)
 end
 
-
 function level.draw()
-    love.graphics.draw(background, 0,0)
-    love.graphics.draw(spaceShipFloor, offset,offset)
+    love.graphics.draw(background, 0, 0)
+    love.graphics.draw(spaceShipFloor, offset, offset)
+
     bulletMaster.draw()
     bullet.draw()
     bomb.draw()
     freeze.draw()
     alien.draw()
+    numberCountdown.draw()
 
     love.graphics.setColor(0, 0, 1)
     for acceleratorIndex, accelerator in ipairs(accelerators) do
         love.graphics.rectangle('fill', ((accelerator.x - 1) * cellSize) + offset, ((accelerator.y - 1) * cellSize) +
-        offset, cellSize - 1, cellSize - 1)
+            offset, cellSize - 1, cellSize - 1)
     end
 
 
 
 
     human.draw()
-
-
-
+    gameOver.draw()
 end
 
 return level

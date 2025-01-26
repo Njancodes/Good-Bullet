@@ -1,10 +1,22 @@
 
 local bullet = require 'characters.bullet'
+local gameOver = require 'ui.gameOver'
+local numberCountdown = require 'ui.numberCountDown'
 
 local human = {}
 local humans = {}
 local timer = 0
+local humanImage = nil
+local isMoveHuman = true
 
+function human.load()
+    isMoveHuman = true
+    humanImage = love.graphics.newImage('assets/Uman.png')
+end
+
+function human.setIsMoveHuman(value)
+    isMoveHuman = value    
+end
 
 function human.clashWithMouse(posX, posY)
     local cannotPlaceHuman = false
@@ -35,11 +47,6 @@ function human.draw()
     love.graphics.setColor(1, 1, 1)
     local bullet_x, bullet_y = bullet.headPosition()
     for humanIndex, human in ipairs(humans) do
-        if bullet_x == human.x and bullet_y == human.y then
-            love.graphics.setColor(1, 0, 0)
-        else
-            love.graphics.setColor(1, 1, 1)
-        end
         love.graphics.draw(humanImage, ((human.x - 1) * cellSize) + offset, ((human.y - 1) * cellSize) + offset, 0, 1.8)
     end
 end
@@ -69,23 +76,26 @@ end
 
 function human.update(dt)
     timer = timer + dt
-    if timer >= .2 then
-
+    if timer >= 0.15 and isMoveHuman then
         timer = 0
-    for humanIndex, human in ipairs(humans) do
+        for humanIndex, human in ipairs(humans) do
             if human.type == 'moveHumanX' or human.type == 'moveHumanY' then
                 moveHuman(human)
             end
+        end
+    end
+    for humanIndex, human in ipairs(humans) do
             for bulletIdx, fire in ipairs(bullet.getSegments()) do
                 if fire.x == human.x and fire.y == human.y then
                     print("Hit")
+                    isMoveHuman = false
+                    numberCountdown.pause()
+                    gameOver.lose()
+                    gameOver.gameOverEnable()
                     bullet.cannotMove()
-                end
             end
         end
     end
-
-
 end
 
 return human

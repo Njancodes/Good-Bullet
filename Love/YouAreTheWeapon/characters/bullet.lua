@@ -1,3 +1,6 @@
+local numberCountdown = require "ui.numberCountDown"
+local gameOver = require "ui.gameOver"
+
 local bullet = {
     segments = {
         { x = 1, y = 1 }
@@ -11,9 +14,15 @@ local canMove = true
 local directionGrid = {}
 local directionQueue = { 'right' }
 local dontRemove = false
+local timer = 0
+local isNoMoreBombs = false
 
 function bullet.cannotMove()
     canMove = false
+end
+
+function bullet.noMoreBombs()
+    isNoMoreBombs = true
 end
 
 function bullet.dontRemoveSegment()
@@ -25,23 +34,25 @@ function bullet.removeSegment()
 end
 
 function bullet.canMove()
-    canMove = true
+    if not canMove then
+        canMove = true
+    end
 end
 
 function bullet.remove(index)
-    table.remove(bullet.segments, index)
+    table.remove(bullet.getSegments(), index)
 end
 
 function bullet.insert(index, val)
-    table.insert(bullet.segments, index, val)
+    table.insert(bullet.getSegments(), index, val)
 end
 
 function bullet.bulletSegmentsLength()
-    return #bullet.segments
+    return #bullet.getSegments()
 end
 
 function bullet.headPosition()
-    return bullet.segments[1].x, bullet.segments[1].y
+    return bullet.getSegments()[1].x, bullet.segments[1].y
 end
 
 function bullet.load()
@@ -95,46 +106,52 @@ function checkOutOfBounds(x, y, maxX, maxY)
     end
 end
 
-function bullet.update()
-    local bulletSegments = bullet.getSegments()
-    bullet.removeSegment()
-    if #bullet.segments == 1 then
-        canMove = false
-    end
+function bullet.update(dt)
+    timer = timer + dt
+    if timer >= 0.15 then
+        timer = 0
+        if canMove then
+            local bulletSegments = bullet.getSegments()
 
 
+            bullet.removeSegment()
+            if #bullet.getSegments() == 1 then
+                bullet.cannotMove()
+            end
 
-    local nextXPosition = bulletSegments[1].x
-    local nextYPosition = bulletSegments[1].y
-    if canMove then
-        if #directionQueue > 1 then
-            table.remove(directionQueue, 1)
+            local nextXPosition = bulletSegments[1].x
+            local nextYPosition = bulletSegments[1].y
+
+            if #directionQueue > 1 then
+                table.remove(directionQueue, 1)
+            end
+            if directionQueue[1] == 'right' then
+                nextXPosition = nextXPosition + 1
+            elseif directionQueue[1] == 'left' then
+                nextXPosition = nextXPosition - 1
+            elseif directionQueue[1] == 'up' then
+                nextYPosition = nextYPosition - 1
+            elseif directionQueue[1] == 'down' then
+                nextYPosition = nextYPosition + 1
+            end
+
+
+            bullet.insert(1, { x = nextXPosition, y = nextYPosition })
+
+            local currPositionOfHeadX, currPositionOfHeadY = bullet.headPosition()
+            for acceleratorIndex, accelerator in ipairs(accelerators) do
+                if currPositionOfHeadX == accelerator.x and currPositionOfHeadY == accelerator.y then
+                    bullet.dontRemoveSegment()
+                    table.remove(accelerators, acceleratorIndex)
+                end
+            end
+
+            if dontRemove then
+                return
+            else
+                bullet.remove(bullet.bulletSegmentsLength())
+            end
         end
-        if directionQueue[1] == 'right' then
-            nextXPosition = nextXPosition + 1
-        elseif directionQueue[1] == 'left' then
-            nextXPosition = nextXPosition - 1
-        elseif directionQueue[1] == 'up' then
-            nextYPosition = nextYPosition - 1
-        elseif directionQueue[1] == 'down' then
-            nextYPosition = nextYPosition + 1
-        end
-    end
-
-    bullet.insert(1, { x = nextXPosition, y = nextYPosition })
-
-    local currPositionOfHeadX, currPositionOfHeadY = bullet.headPosition()
-    for acceleratorIndex, accelerator in ipairs(accelerators) do
-        if currPositionOfHeadX == accelerator.x and currPositionOfHeadY == accelerator.y then
-            bullet.dontRemoveSegment()
-            table.remove(accelerators, acceleratorIndex)
-        end
-    end
-
-    if dontRemove then
-        return
-    else
-        bullet.remove(bullet.bulletSegmentsLength())
     end
 end
 
@@ -164,26 +181,34 @@ function bullet.draw()
                 love.graphics.draw(bulletImage, ((bulletSegment.x + x) * cellSize) + offset,
                 ((bulletSegment.y + y) * cellSize) + offset, math.rad(rotation), 1.8, 1.8)
             else
-                love.graphics.rectangle('fill', ((bulletSegment.x) * cellSize) + offset,
-                ((bulletSegment.y) * cellSize) + offset,cellSize-1, cellSize-1)
-                bullet.cannotMove()
+                print("Out Of Bounds")
+                if isNoMoreBombs then
+                    bullet.cannotMove()
+                    numberCountdown.pause()
+                    gameOver.win()
+                    isNoMoreBombs = false
+                    gameOver.gameOverEnable()
+                else
+                    gameOver.lose()
+                    gameOver.gameOverEnable()
+                    numberCountdown.pause()
+                    isNoMoreBombs = false
+                    bullet.cannotMove()
+                end
             end
-            
         elseif bulletIndex == bullet.bulletSegmentsLength() then
             if (not (checkOutOfBounds(bulletSegment.x, bulletSegment.y, 14, 14))) then
                 local dir_table = directionGiver(directionGrid[bulletSegment.x][bulletSegment.y])
                 love.graphics.draw(fireImage, ((bulletSegment.x + dir_table.x) * cellSize) + offset,
-                    ((bulletSegment.y + dir_table.y) * cellSize) + offset, math.rad(dir_table.rotation), scale + 1.3, scale + 1.3)
-            else
-                bullet.cannotMove()
+                    ((bulletSegment.y + dir_table.y) * cellSize) + offset, math.rad(dir_table.rotation), scale + 1.3,
+                    scale + 1.3)
             end
         else
             if (not (checkOutOfBounds(bulletSegment.x, bulletSegment.y, 14, 14))) then
                 local dir_table = directionGiver(directionGrid[bulletSegment.x][bulletSegment.y])
                 love.graphics.draw(midfireImage, ((bulletSegment.x + dir_table.x) * cellSize) + offset,
-                    ((bulletSegment.y + dir_table.y) * cellSize) + offset, math.rad(dir_table.rotation), scale + 1.3, scale + 1.3)
-            else
-                bullet.cannotMove()
+                    ((bulletSegment.y + dir_table.y) * cellSize) + offset, math.rad(dir_table.rotation), scale + 1.3,
+                    scale + 1.3)
             end
         end
     end
@@ -191,6 +216,16 @@ end
 
 function bullet.getSegments()
     return bullet.segments
+end
+
+function bullet.flush()
+    bullet.setSegments({})
+    directionQueue = { 'right' }
+    bullet.canMove()
+end
+
+function bullet.setDirection(direction)
+    table.insert(directionQueue, direction)
 end
 
 function bullet.keypressed(key)
@@ -204,15 +239,13 @@ function bullet.keypressed(key)
         table.insert(directionQueue, 'left')
     end
 
-    if key == 'space' and canMove then
-        bullet.cannotMove()
-    elseif key == 'space' and not canMove then
-        bullet.canMove()
-    end
-
+    -- if key == 'space' and not canMove then
+    --     bullet.canMove()
+    -- end
 end
 
 function bullet.setSegments(newSegments)
+    print('Created new segments')
     bullet.segments = newSegments
 end
 

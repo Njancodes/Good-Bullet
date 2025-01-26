@@ -1,14 +1,11 @@
-
 local bullet = require 'characters.bullet'
 local human  = require 'characters.human'
-
+local numberCountdown = require 'ui.numberCountDown'
+local gameOver        = require 'ui.gameOver'
 
 local bomb = {}
 local bombs = {}
 local timer = 0
-local blastBombs = true
-local bombFreeze = 1
-local anotherTimer = 0
 local bombImage = nil
 
 function bomb.load()
@@ -39,7 +36,7 @@ end
 
 function bomb.draw()
     love.graphics.setColor(1, 1, 1)
-    for bombIndex, bomb in ipairs(bombs) do
+    for bombIndex, bomb in ipairs(bomb.getBombs()) do
         love.graphics.draw(bombImage, ((bomb.x - 1) * cellSize) + offset, ((bomb.y - 1) * cellSize) + offset, 0, 1.8)
     end
 end
@@ -56,13 +53,9 @@ end
 
 function bomb.update(dt)
     timer = timer + dt
-    anotherTimer = anotherTimer + (dt * bombFreeze)
-    if anotherTimer >= 7 and blastBombs then
-
-        anotherTimer = 0
-
+    if numberCountdown.getCurrValue() <= 1 then
         if #bombs ~= 0 then
-            for bombIdx, bomb in ipairs(bombs) do
+            for bombIdx, bomb in ipairs(bomb.getBombs()) do
                 local positions = {
                     {x = bomb.x - 1, y = bomb.y - 1},
                     {x = bomb.x, y = bomb.y - 1},
@@ -76,12 +69,12 @@ function bomb.update(dt)
                 for index, value in ipairs(human.getHumans()) do
                     for i = 1, #positions do
                         if positions[i].x == value.x and positions[i].y == value.y then
-                            print("Game Over")
+                            gameOver.lose()
+                            gameOver.gameOverEnable()
                             bullet.cannotMove()
                         end
                     end
                 end
-            
             end
         end
     end
@@ -89,13 +82,23 @@ function bomb.update(dt)
         timer = 0
 
         local currPositionOfHeadX, currPositionOfHeadY = bullet.headPosition()
-        for bombIndex, bomb in ipairs(bombs) do
-            if currPositionOfHeadX == bomb.x and currPositionOfHeadY == bomb.y then
+        for bombIndex, bob in ipairs(bombs) do
+            if currPositionOfHeadX == bob.x and currPositionOfHeadY == bob.y then
                 if bullet.bulletSegmentsLength() > 1 then
                     bullet.remove(bullet.bulletSegmentsLength())
-                    table.remove(bombs, bombIndex)
+                    table.remove(bomb.getBombs(), bombIndex)
                 end
             end
+        end
+    end
+    if #bombs == 0 then
+        if #bullet.getSegments() == 1 then
+            bullet.cannotMove()
+            numberCountdown.pause()
+            gameOver.win()
+            gameOver.gameOverEnable()
+        else
+            bullet.noMoreBombs()
         end
     end
 end

@@ -4,17 +4,17 @@ levelselector = {}
 local levelbuttons = {}
 
 
-local level1 = createButton(35,100,100,50)
+local level1 = createButton("Level 1",35,100,100,50)
 table.insert(levelbuttons, level1)
-local level2 = createButton(level1.x + level1.width + 5,level1.y,100,50)
+local level2 = createButton("Level 2",level1.x + level1.width + 5,level1.y,100,50)
 table.insert(levelbuttons, level2)
-local level3 = createButton(level2.x + level2.width + 5,level2.y,100,50)
+local level3 = createButton("Level 3",level2.x + level2.width + 5,level2.y,100,50)
 table.insert(levelbuttons, level3)
-local level4 = createButton(level3.x + level3.width + 5,level3.y,100,50)
+local level4 = createButton("Level 4",level3.x + level3.width + 5,level3.y,100,50)
 table.insert(levelbuttons, level4)
-local level5 = createButton(level4.x + level4.width + 5,level4.y,100,50)
+local level5 = createButton("Level 5",level4.x + level4.width + 5,level4.y,100,50)
 table.insert(levelbuttons, level5)
-local level6 = createButton(level5.x + level5.width + 5,level5.y,100,50)
+local level6 = createButton("Level 6",level5.x + level5.width + 5,level5.y,100,50)
 table.insert(levelbuttons, level6)
 
 
@@ -36,7 +36,7 @@ function levelselector.mousepressed()
         button.clicked(
             function ()
                 print("Level "..btnIdx.." Selected")
-                chooseLevel('level-none')
+                chooseLevel('level-'..btnIdx)
                 changeScene('level')
             end
         )

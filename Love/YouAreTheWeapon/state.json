@@ -1,1 +1,1 @@
-{"alienWall":false,"bullet":[{"y":7,"x":5},{"y":7,"x":5}],"bombs":[],"dialogues":["Hi Nijo !!","I am Bullet#909","And you are going to control.."," me for the rest of the game.."],"humans":[],"accelerators":[],"freezes":[]}
+{"humans":[{"y":2,"x":10},{"y":4,"x":10},{"y":10,"x":9},{"y":10,"x":11}],"freezes":[],"dialogues":["Hi Nijo !!","I am Bullet#909","And you are going to control.."," me for the rest of the game.."],"alienWall":false,"accelerators":[],"bombs":[{"y":3,"x":10},{"y":10,"x":10}],"bullet":[{"y":9,"x":2},{"y":9,"x":1},{"y":9,"x":1},{"y":9,"x":1}]}

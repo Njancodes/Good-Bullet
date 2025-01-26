@@ -11,9 +11,9 @@ love.window.setMode(WindowWidth,WindowHeight)
 
 
 -- x and y starts from the top left corner
-local playButton = createButton(WindowWidth/2-200/2,WindowHeight/2-70/2,200,70)
-local optionButton = createButton(playButton.x,playButton.y + 80,playButton.width,playButton.height)
-local quitButton = createButton(optionButton.x,optionButton.y + 80,playButton.width,playButton.height)
+local playButton = createButton("Play", WindowWidth/2-200/2,WindowHeight/2-70/2,200,70)
+local optionButton = createButton("Option",playButton.x,playButton.y + 80,playButton.width,playButton.height)
+local quitButton = createButton("Quit",optionButton.x,optionButton.y + 80,playButton.width,playButton.height)
 
 function menu.load()
 
@@ -48,7 +48,6 @@ function menu.draw()
     love.graphics.rectangle('fill',playButton.x, playButton.y, playButton.width, playButton.height)
     love.graphics.rectangle('fill',optionButton.x, optionButton.y, optionButton.width, optionButton.height)
     love.graphics.rectangle('fill',quitButton.x, quitButton.y, quitButton.width, quitButton.height)
-
 
 end
 

@@ -1,7 +1,8 @@
 local bullet = require "characters.bullet"
-local bulletMaster = {
-    
-}
+local numberCountdown = require 'ui.numberCountDown'
+
+local bulletMaster = {}
+
 
 local bulletMasterImage = nil
 local dialogueFont = nil
@@ -11,6 +12,8 @@ local dialogues = {""} -- Comes from each level
 local split_dialogues = {}
 local continueDialogue = false
 local showDialogue = ""
+local dialogueRunning = false
+local i = 0
 
 function bulletMaster.setDialogues(newDialogues)
     dialogues = newDialogues
@@ -22,12 +25,21 @@ end
 
 function bulletMaster.load()
     bulletMasterImage = love.graphics.newImage('assets/bullet-emotions/bullet-neutral.png')
+    dialogueBoxImage = love.graphics.newImage('assets/DialogueBox.png')
     dialogueFont = love.graphics.newFont( "assets/font/sh-pinscher/SHPinscher-Regular.otf", 50 )
     dialogueFont:setFilter( "nearest", "nearest" )
+    currDialogue = 1
+    i = 0
+    -- continueDialogue = true
     local dialogue = dialogues[currDialogue]
     table.insert(split_dialogues, mysplit(dialogue))
 end
-local i = 0
+
+function bulletMaster.reset()
+    currDialogue = 1
+end
+
+
 function bulletMaster.update(dt)
     timer = timer + dt
     if timer >= .1 then
@@ -35,7 +47,9 @@ function bulletMaster.update(dt)
         i = i + 1
         if currDialogue <= #dialogues then
             bullet.cannotMove()
-            if i <= #split_dialogues[currDialogue] then
+            print(i)
+            dialogueRunning = (i <= #split_dialogues[currDialogue])
+            if dialogueRunning then
                 showDialogue = string.format(showDialogue .. "%s",split_dialogues[currDialogue][i])
             elseif continueDialogue then
                 i = 0
@@ -47,17 +61,17 @@ function bulletMaster.update(dt)
                 end
                 continueDialogue = false
             end
+        else
+            bullet.canMove()
+            numberCountdown.start()
         end
     end
 end
 
 
 function bulletMaster.keypressed(key)
-    if key == 'return' then
+    if key == 'return' and not dialogueRunning then
         continueDialogue = true
-        if currDialogue >= #dialogues then
-            bullet.canMove()
-        end
     end
 end
 
@@ -75,10 +89,10 @@ function bulletMaster.draw()
 
     love.graphics.setColor(1, 1, 1)
     love.graphics.draw(bulletMasterImage, 20, 20,0,3,3)
-    love.graphics.rectangle('fill', 95, 20, 550, 100)
+    love.graphics.draw(dialogueBoxImage, 95, 20)
     love.graphics.setColor(0, 0, 1)
     if currDialogue > 0 and currDialogue <= #dialogues then
-        love.graphics.print(showDialogue, dialogueFont, 100,30)
+        love.graphics.print(showDialogue, dialogueFont, 120,30)
     end
 end
 
