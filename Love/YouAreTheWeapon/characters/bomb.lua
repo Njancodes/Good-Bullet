@@ -2,6 +2,7 @@ local bullet = require 'characters.bullet'
 local human  = require 'characters.human'
 local numberCountdown = require 'ui.numberCountDown'
 local gameOver        = require 'ui.gameOver'
+local soundfx         = require 'ui.soundfx'
 
 local bomb = {}
 local bombs = {}
@@ -69,6 +70,7 @@ function bomb.update(dt)
                 for index, value in ipairs(human.getHumans()) do
                     for i = 1, #positions do
                         if positions[i].x == value.x and positions[i].y == value.y then
+                            soundfx.explosion()
                             gameOver.lose()
                             gameOver.gameOverEnable()
                             bullet.cannotMove()
@@ -85,6 +87,7 @@ function bomb.update(dt)
         for bombIndex, bob in ipairs(bombs) do
             if currPositionOfHeadX == bob.x and currPositionOfHeadY == bob.y then
                 if bullet.bulletSegmentsLength() > 1 then
+                    soundfx.destroyedBomb()
                     bullet.remove(bullet.bulletSegmentsLength())
                     table.remove(bomb.getBombs(), bombIndex)
                 end
@@ -92,9 +95,10 @@ function bomb.update(dt)
         end
     end
     if #bombs == 0 then
+        numberCountdown.pause()
+
         if #bullet.getSegments() == 1 then
             bullet.cannotMove()
-            numberCountdown.pause()
             gameOver.win()
             gameOver.gameOverEnable()
         else

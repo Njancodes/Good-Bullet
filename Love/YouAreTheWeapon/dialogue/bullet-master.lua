@@ -1,5 +1,6 @@
 local bullet = require "characters.bullet"
 local numberCountdown = require 'ui.numberCountDown'
+local soundfx         = require 'ui.soundfx'
 
 local bulletMaster = {}
 
@@ -16,6 +17,7 @@ local dialogueRunning = false
 local i = 0
 
 function bulletMaster.setDialogues(newDialogues)
+    print("New dialogues acquired")
     dialogues = newDialogues
 end
 
@@ -31,7 +33,8 @@ function bulletMaster.load()
     currDialogue = 1
     i = 0
     -- continueDialogue = true
-    local dialogue = dialogues[currDialogue]
+    local dialogue = bulletMaster.getDialogues()[currDialogue]
+    split_dialogues = {}
     table.insert(split_dialogues, mysplit(dialogue))
 end
 
@@ -42,14 +45,18 @@ end
 
 function bulletMaster.update(dt)
     timer = timer + dt
-    if timer >= .1 then
+    if timer >= .01 then
         timer = 0
         i = i + 1
         if currDialogue <= #dialogues then
             bullet.cannotMove()
-            print(i)
             dialogueRunning = (i <= #split_dialogues[currDialogue])
             if dialogueRunning then
+                if split_dialogues[currDialogue][i] == 'a' or split_dialogues[currDialogue][i] == 'e' or split_dialogues[currDialogue][i] == 'i' or split_dialogues[currDialogue][i] == 'o' or split_dialogues[currDialogue][i] == 'u' then
+                    soundfx.vowel()
+                elseif split_dialogues[currDialogue][i] ~= " " then
+                    soundfx.consonant()
+                end
                 showDialogue = string.format(showDialogue .. "%s",split_dialogues[currDialogue][i])
             elseif continueDialogue then
                 i = 0

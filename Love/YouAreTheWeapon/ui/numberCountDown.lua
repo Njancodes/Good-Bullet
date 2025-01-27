@@ -1,3 +1,4 @@
+local soundfx = require "ui.soundfx"
 local numberCountdown = {}
 
 local numberCountDownSpriteSheet = nil
@@ -27,6 +28,9 @@ function numberCountdown.update(dt)
     if timer >= 1 then
         timer = 0
         if currValue >= 2 and notFreeze and start then
+            if currValue ~= 2 then
+                soundfx.timer(currValue)                
+            end
             currValue = currValue - 1
         elseif not notFreeze and freezeValue >= 1 then
             freezeValue = freezeValue - 1

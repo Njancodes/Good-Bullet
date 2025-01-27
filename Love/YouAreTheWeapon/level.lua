@@ -14,6 +14,7 @@ local bulletMaster = require('dialogue.bullet-master')
 -- ui system
 local numberCountdown = require('ui.numberCountDown')
 local gameOver = require('ui.gameOver')
+local soundfx = require('ui.soundfx')
 
 -- images
 local background = nil
@@ -54,6 +55,8 @@ function level.load()
     timer = 0
     love.graphics.setDefaultFilter("nearest", "nearest")
 
+    soundfx.load()
+
     background = love.graphics.newImage("assets/background.png")
     spaceShipFloor = love.graphics.newImage("assets/spaceship-floor.png")
 
@@ -88,6 +91,7 @@ end
 function level.restart()
     timer = 0
     state = json.decode(content, 1, nil)
+    soundfx.load()
     human.setIsMoveHuman(true)
     bomb.setBombs(state.bombs)
     bullet.flush()
@@ -162,7 +166,7 @@ function level.keypressed(key)
     if key == 'f' then
         bomb.freeze()
     end
-
+    soundfx.keypressed(key)
     alien.keypressed(key)
     bulletMaster.keypressed(key)
 
