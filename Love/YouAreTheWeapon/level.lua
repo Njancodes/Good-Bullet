@@ -90,6 +90,7 @@ end
 
 function level.restart()
     timer = 0
+    numberCountdown.start()
     state = json.decode(content, 1, nil)
     soundfx.load()
     human.setIsMoveHuman(true)
@@ -149,6 +150,7 @@ function level.update(dt)
             end
         end
     end
+    gameOver.update(dt)
     numberCountdown.update(dt)
     human.update(dt)
     bullet.update(dt)
@@ -213,7 +215,7 @@ end
 
 function level.draw()
     love.graphics.draw(background, 0, 0)
-    love.graphics.draw(spaceShipFloor, offset, offset)
+    love.graphics.draw(spaceShipFloor, offset - 10, offset - 10)
 
     bulletMaster.draw()
     bullet.draw()

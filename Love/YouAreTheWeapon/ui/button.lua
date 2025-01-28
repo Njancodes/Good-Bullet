@@ -12,7 +12,9 @@ function createButton(text, x, y, width, height)
         if mouseX > x and mouseX < x + width and mouseY > y and mouseY < y + height then
             hoverFunction()
         else
-            notHoverFunction()
+            if notHoverFunction ~= nil then
+                notHoverFunction()                
+            end
         end
     end
     button.clicked = function (clickedFunction)

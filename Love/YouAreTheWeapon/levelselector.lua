@@ -16,17 +16,32 @@ local level5 = createButton("Level 5",level4.x + level4.width + 5,level4.y,100,5
 table.insert(levelbuttons, level5)
 local level6 = createButton("Level 6",level5.x + level5.width + 5,level5.y,100,50)
 table.insert(levelbuttons, level6)
+local bgImage = nil
+local station1 = nil
+local station2 = nil
+local station3 = nil
+local station4 = nil
+local station5 = nil
+local station6 = nil
+local alienship = nil
+local x, y = level1.x + level1.width/2,level1.y - 50
 
 
 function levelselector.load()
     print("Loaded")
-
+    bgImage = love.graphics.newImage("assets/levelSelectorBG.png")
+    station1 = love.graphics.newImage("assets/Spaceship-module.png")
+    station2 = love.graphics.newImage("assets/Spaceship-module2.png")
+    station3 = love.graphics.newImage("assets/Spaceship-module3.png")
+    station4 = love.graphics.newImage("assets/Spaceship-module4.png")
+    station5 = love.graphics.newImage("assets/Spaceship-module5.png")
+    station6 = love.graphics.newImage("assets/Spaceship-module6.png")
+    alienship = love.graphics.newImage("assets/alienship.png")
 end
 
 function levelselector.keypressed(key)
     
 end
-
 
 
 
@@ -46,15 +61,28 @@ function levelselector.mousepressed()
 end
 
 function levelselector.draw()
-    love.graphics.rectangle('fill',level1.x, level1.y, level1.width, level1.height)
-    love.graphics.rectangle('fill',level2.x, level2.y, level2.width, level2.height)
-    love.graphics.rectangle('fill',level3.x, level3.y, level3.width, level3.height)
-    love.graphics.rectangle('fill',level4.x, level4.y, level4.width, level4.height)
-    love.graphics.rectangle('fill',level5.x, level5.y, level5.width, level5.height)
-    love.graphics.rectangle('fill',level6.x, level6.y, level6.width, level6.height)
+
+    love.graphics.draw(bgImage, 0,0)
+    love.graphics.draw(station1,level1.x, level1.y)
+    love.graphics.draw(station2,level2.x, level2.y)
+    love.graphics.draw(station3,level3.x, level3.y)
+    love.graphics.draw(station4,level4.x, level4.y)
+    love.graphics.draw(station5,level5.x, level5.y)
+    love.graphics.draw(station6,level6.x, level6.y)
+    love.graphics.draw(alienship,x,y,0,1,1,60/2, 50/2)
+
+
 end
 
 function levelselector.update()
+    for btnIdx, button in ipairs(levelbuttons) do
+        button.hover(
+            function ()
+                x = button.x + button.width/2
+                y = button.y - 50
+            end
+        )
+    end
 end
 
 return levelselector

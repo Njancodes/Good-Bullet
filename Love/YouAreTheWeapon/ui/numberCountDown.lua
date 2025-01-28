@@ -28,6 +28,7 @@ function numberCountdown.update(dt)
     if timer >= 1 then
         timer = 0
         if currValue >= 2 and notFreeze and start then
+            print(currValue)
             if currValue ~= 2 then
                 soundfx.timer(currValue)                
             end
@@ -52,6 +53,7 @@ end
 function numberCountdown.start()
     start = true
 end
+
 function numberCountdown.pause()
     start = false
 end

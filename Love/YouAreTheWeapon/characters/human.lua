@@ -87,9 +87,9 @@ function human.update(dt)
     for humanIndex, human in ipairs(humans) do
             for bulletIdx, fire in ipairs(bullet.getSegments()) do
                 if fire.x == human.x and fire.y == human.y then
-                    print("Hit")
                     isMoveHuman = false
                     numberCountdown.pause()
+                    
                     gameOver.lose()
                     gameOver.gameOverEnable()
                     bullet.cannotMove()

@@ -15,6 +15,8 @@ local continueDialogue = false
 local showDialogue = ""
 local dialogueRunning = false
 local i = 0
+local startedGame = false
+local pressedSpace = false
 
 function bulletMaster.setDialogues(newDialogues)
     print("New dialogues acquired")
@@ -26,9 +28,10 @@ function bulletMaster.getDialogues()
 end
 
 function bulletMaster.load()
+    startedGame = false
     bulletMasterImage = love.graphics.newImage('assets/bullet-emotions/bullet-neutral.png')
     dialogueBoxImage = love.graphics.newImage('assets/DialogueBox.png')
-    dialogueFont = love.graphics.newFont( "assets/font/sh-pinscher/SHPinscher-Regular.otf", 50 )
+    dialogueFont = love.graphics.newFont( "assets/font/sh-pinscher/SHPinscher-Regular.otf", 40 )
     dialogueFont:setFilter( "nearest", "nearest" )
     currDialogue = 1
     i = 0
@@ -40,6 +43,10 @@ end
 
 function bulletMaster.reset()
     currDialogue = 1
+end
+
+function bulletMaster.setStartedGame(bool)
+    startedGame = bool
 end
 
 
@@ -69,8 +76,11 @@ function bulletMaster.update(dt)
                 continueDialogue = false
             end
         else
-            bullet.canMove()
-            numberCountdown.start()
+            if not startedGame then
+                bullet.canMove()
+                numberCountdown.start()
+                startedGame = true
+            end
         end
     end
 end
@@ -80,6 +90,7 @@ function bulletMaster.keypressed(key)
     if key == 'return' and not dialogueRunning then
         continueDialogue = true
     end
+
 end
 
 function mysplit(inputstr)
@@ -97,9 +108,9 @@ function bulletMaster.draw()
     love.graphics.setColor(1, 1, 1)
     love.graphics.draw(bulletMasterImage, 20, 20,0,3,3)
     love.graphics.draw(dialogueBoxImage, 95, 20)
-    love.graphics.setColor(0, 0, 1)
+    love.graphics.setColor(107/255, 196/255, 23/255)
     if currDialogue > 0 and currDialogue <= #dialogues then
-        love.graphics.print(showDialogue, dialogueFont, 120,30)
+        love.graphics.printf(showDialogue, dialogueFont, 120,20,430)
     end
 end
 

@@ -22,7 +22,6 @@ function soundfx.load()
 end
 
 function soundfx.timer(currValue)
-    print(currValue)
     if currValue <= 7 and currValue > 4 then
         timerSrc:setPitch(2)
     elseif currValue <= 4 then

@@ -6,6 +6,16 @@ local isGameOver = false
 local levelFailed = nil
 local restartButton = createButton("Restart", 250, 400, 200, 50)
 local levelSelect = createButton("Level Select", 250, 480, 200, 50)
+
+local restartButtonImg = love.graphics.newImage("assets/restartButton.png")
+local hoverRestartButtonImg = love.graphics.newImage("assets/hoverRestartButton.png")
+local imageToRenderRestart = restartButtonImg
+
+local levelButtonImg = love.graphics.newImage("assets/levelSelect.png")
+local hoverlevelButtonImg = love.graphics.newImage("assets/hoverlevelSelect.png")
+local imageToRenderLevel = levelButtonImg
+
+
 local levelPassed = nil
 local isPassed = false
 local isFailed = false
@@ -35,6 +45,22 @@ function gameOver.load()
     levelPassed = love.graphics.newImage('assets/levelPassed.png')
 end
 function gameOver.update(dt)
+    restartButton.hover(
+        function ()
+            imageToRenderRestart = hoverRestartButtonImg
+        end,
+        function ()
+            imageToRenderRestart = restartButtonImg
+        end
+    )
+    levelSelect.hover(
+        function ()
+            imageToRenderLevel = hoverlevelButtonImg
+        end,
+        function ()
+            imageToRenderLevel = levelButtonImg
+        end
+    )
 end
 
 function gameOver.gameOverEnable()
@@ -44,13 +70,13 @@ end
 function gameOver.draw()
     if isGameOver and isFailed then
         love.graphics.draw(levelFailed, 159,98)
-        restartButton.draw(255,0,0)  
-        levelSelect.draw(255,255,0)  
+        love.graphics.draw(imageToRenderRestart, restartButton.x, restartButton.y)
+        love.graphics.draw(imageToRenderLevel, levelSelect.x, levelSelect.y)
         isFailed = false
     elseif isGameOver and isPassed then
         love.graphics.draw(levelPassed, 159,98)
-        restartButton.draw(255,0,0)  
-        levelSelect.draw(255,255,0) 
+        love.graphics.draw(imageToRenderRestart, restartButton.x, restartButton.y)
+        love.graphics.draw(imageToRenderLevel, levelSelect.x, levelSelect.y)
         isPassed = false
     end
 end
