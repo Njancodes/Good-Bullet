@@ -69,15 +69,22 @@ end
 
 function gameOver.draw()
     if isGameOver and isFailed then
+        restartButton.setDisabled(false)
+        levelSelect.setDisabled(false)
         love.graphics.draw(levelFailed, 159,98)
         love.graphics.draw(imageToRenderRestart, restartButton.x, restartButton.y)
         love.graphics.draw(imageToRenderLevel, levelSelect.x, levelSelect.y)
         isFailed = false
     elseif isGameOver and isPassed then
+        restartButton.setDisabled(false)
+        levelSelect.setDisabled(false)
         love.graphics.draw(levelPassed, 159,98)
         love.graphics.draw(imageToRenderRestart, restartButton.x, restartButton.y)
         love.graphics.draw(imageToRenderLevel, levelSelect.x, levelSelect.y)
         isPassed = false
+    else
+        restartButton.setDisabled(true)
+        levelSelect.setDisabled(true)
     end
 end
 

@@ -2,6 +2,7 @@
 local bullet = require 'characters.bullet'
 local gameOver = require 'ui.gameOver'
 local numberCountdown = require 'ui.numberCountDown'
+local soundfx         = require 'ui.soundfx'
 
 local human = {}
 local humans = {}
@@ -89,7 +90,7 @@ function human.update(dt)
                 if fire.x == human.x and fire.y == human.y then
                     isMoveHuman = false
                     numberCountdown.pause()
-                    
+                    soundfx.humanHurt()
                     gameOver.lose()
                     gameOver.gameOverEnable()
                     bullet.cannotMove()

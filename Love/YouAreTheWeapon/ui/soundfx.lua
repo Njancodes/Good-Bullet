@@ -16,9 +16,13 @@ local consonantSrc = love.audio.newSource("assets/sfx/consonant.wav","static")
 local vowelSrc = love.audio.newSource("assets/sfx/vowel.wav","static")
 vowelSrc:setPitch(0.5)
 
+local humanHurtSrc = love.audio.newSource("assets/sfx/humanHurt.wav","static")
+local isHumanHit = false
+
 
 function soundfx.load()
     isExploded = false
+    isHumanHit = false
 end
 
 function soundfx.timer(currValue)
@@ -38,6 +42,13 @@ function soundfx.keypressed(key)
     end
 end
 
+function soundfx.humanHurt()
+    if not isHumanHit then
+        humanHurtSrc:play()
+        isHumanHit = true
+    end
+end
+
 function soundfx.consonant()
     consonantSrc:play()
 end
@@ -48,7 +59,6 @@ end
 
 function soundfx.explosion()
    if not isExploded then
-    print("Hello")
     explosionSrc:play() 
     isExploded = true
    end 
