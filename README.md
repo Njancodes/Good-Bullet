@@ -10,4 +10,4 @@ Learnt a lot about time management, scope and about Lua with LÖVE 2D framework.
 
 Play the game in itch.io 
 
-![](https://njancodes.itch.io/good-bullet)
+https://njancodes.itch.io/good-bullet
